@@ -1,0 +1,55 @@
+name: 사이트 갱신
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '23 * * * *'   # 매시 23분(UTC)에 드라이브 변경 확인
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.build.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: 필요한 프로그램 설치
+        run: pip install -r scripts/requirements.txt
+      - name: 드라이브에서 받아 변환
+        id: build
+        env:
+          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+          GDRIVE_FOLDER_ID: 12OWYgGg2rsd8s-6kVAUzdk5ezEZ1EPbM
+          SITE_URL: https://ayu870213.github.io/id-textbook
+        run: python scripts/build.py --out _site
+      - name: 사이트 파일 묶기
+        if: steps.build.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+          include-hidden-files: true
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: GitHub Pages에 배포
+        id: deploy
+        uses: actions/deploy-pages@v5

@@ -98,20 +98,36 @@ $('dList').addEventListener('click',e=>{const b=e.target.closest('button[data-id
 $('dOut').addEventListener('click',e=>{const b=e.target.closest('button[data-r]'); if(!b) return; regIx=+b.dataset.r; renderDose();});
 
 /* ---------- 가이드 ---------- */
+/* 제목을 이름과 괄호 속 설명으로 나눈다
+   '표준주의 (Standard precaution) 및 격리지침 (Isolation)' → ['표준주의 및 격리지침', 'Standard precaution · Isolation'] */
+function splitTitle(t){
+  const sub=[];
+  const main=t.replace(/\s*\(([^()]*)\)/g,(_,x)=>{sub.push(x.trim());return '';}).replace(/\s+([,:])/g,'$1').replace(/\s{2,}/g,' ').trim();
+  return [main||t, sub.join(' · ')];
+}
+/* 바로가기: 세부 질환(제목 2)이 있으면 그 앞의 공통 주제와 세부 질환을 두 줄로, 없으면 주제(h3)를 한 줄로 */
+function toc(s){
+  const subs=s.subsections, first2=subs.findIndex(x=>x.level===2);
+  const chips=(xs,cls)=>xs.map(x=>`<a href="#${x.anchor}" data-a="${x.anchor}"${cls?` class="${cls}"`:''}>${esc(splitTitle(x.title)[0])}</a>`).join('');
+  if(first2<0){ const h3=subs.filter(x=>x.level===3); return h3.length?`<div class="row">${chips(h3)}</div>`:''; }
+  const common=subs.slice(0,first2).filter(x=>x.level===3), h2=subs.filter(x=>x.level===2);
+  return common.length ? `<div class="row"><span>공통</span>${chips(common)}</div><div class="row"><span>세부</span>${chips(h2,'h2')}</div>`
+                       : `<div class="row">${chips(h2,'h2')}</div>`;
+}
 const G=DATA.guides; let gSel=G[0].id;
 function renderGList(){
   const q=$('gq').value.trim().toLowerCase(); let html='', grp=null;
   for(const s of G){
     if(q && !(s.title+' '+s.text).toLowerCase().includes(q)) continue;
     if(s.group!==grp){grp=s.group; html+=`<li class="grp">${esc(grp)}</li>`;}
-    const m=s.title.match(/^(.*?)\s*(\(.*\))?$/);
-    html+=`<li><button type="button" data-g="${s.id}" aria-current="${s.id===gSel}">${esc(m[1])}${m[2]?`<small>${esc(m[2].slice(1,-1))}</small>`:''}</button></li>`;
+    const [main,sub]=splitTitle(s.title);
+    html+=`<li><button type="button" data-g="${s.id}" aria-current="${s.id===gSel}">${esc(main)}${sub?`<small>${esc(sub)}</small>`:''}</button></li>`;
   }
   $('gList').innerHTML=html||'<li class="grp">검색 결과 없음</li>';
 }
 function renderG(){
-  const s=G.find(x=>x.id===gSel), h2=s.subsections.filter(x=>x.level===2);
-  $('gHead').innerHTML=`<h3>${esc(s.title)}</h3>${h2.length?`<nav class="toc" aria-label="소제목">${h2.map(x=>`<a href="#${x.anchor}" data-a="${x.anchor}">${esc(x.title.replace(/\s*\(.*$/,''))}</a>`).join('')}</nav>`:''}`;
+  const s=G.find(x=>x.id===gSel), [main,sub]=splitTitle(s.title), t=toc(s);
+  $('gHead').innerHTML=`<h3>${esc(main)}${sub?`<small>${esc(sub)}</small>`:''}</h3>${t?`<nav class="toc" aria-label="바로가기">${t}</nav>`:''}`;
   $('gBody').innerHTML=s.html.replace(/<table>/g,'<div class="tw"><table>').replace(/<\/table>/g,'</table></div>');
   $('gBody').scrollTop=0;
 }
@@ -128,7 +144,7 @@ function pad(){document.documentElement.style.scrollPaddingTop=((narrow()?$('min
 addEventListener('resize',pad);
 renderList(); renderGList(); renderG(); renderP(); pad();
 window.__app={ // tests/app.test.mjs에서 사용
-calc,judge,judgeV,renderP,get P(){return P},DRUGS,doseWeight,mgkgLines};
+calc,judge,judgeV,renderP,get P(){return P},DRUGS,doseWeight,mgkgLines,splitTitle};
 }
 // tests/app.test.mjs는 window.__DATA__에 test 데이터를 넣는다
 if(window.__DATA__) main(window.__DATA__);

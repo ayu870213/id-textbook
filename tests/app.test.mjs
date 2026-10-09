@@ -226,3 +226,15 @@ test('체중 규칙이 없는 약은 mg/kg 계산을 표시하지 않음', () =>
   patient(CASES[0].p);
   assert.equal(mgkg('piperacillin-tazobactam', '4.5g q6h'), '');
 });
+
+// ---------------------------------------------------------------- 가이드 제목
+test('가이드 제목을 이름과 괄호 속 설명으로 나눔 (괄호가 여러 개여도 깨지지 않음)', () => {
+  const s = t => [...app.splitTitle(t)];
+  assert.deepEqual(s('표준주의 (Standard precaution) 및 격리지침 (Isolation)'), ['표준주의 및 격리지침', 'Standard precaution · Isolation']);
+  assert.deepEqual(s('급성 위장관계 감염 (Acute gastroenteritis, AGE), 급성 감염성 설사 (Acute infectious diarrhea)'),
+    ['급성 위장관계 감염, 급성 감염성 설사', 'Acute gastroenteritis, AGE · Acute infectious diarrhea']);
+  assert.deepEqual(s('Clostridioides difficile infection (CDI) & 위막성 대장염 (Pseudomembranous colitis, PMC)'),
+    ['Clostridioides difficile infection & 위막성 대장염', 'CDI · Pseudomembranous colitis, PMC']);
+  assert.deepEqual(s('1. 지역사회획득 폐렴 (Community-acquired pneumonia, CAP)'), ['1. 지역사회획득 폐렴', 'Community-acquired pneumonia, CAP']);
+  assert.deepEqual(s('성인예방접종'), ['성인예방접종', '']);
+});

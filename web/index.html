@@ -14,7 +14,7 @@
   --bg:#f2f4f5; --surface:#ffffff; --sunk:#f7f9fa; --ink:#18242c; --ink2:#3d4b54; --muted:#6a7780; --line:#dbe1e4; --line2:#e8ecee;
   --accent:#1f5a45; --accent-ink:#ffffff; --accent-soft:#e2ece8; --accent-line:#a8c6ba;
   --warn:#9a5b00; --warn-soft:#fdf2df; --warn-line:#ebc98f;
-  --alert:#b3372f; --grey-text:#8b969d; --th:#eef2f3;
+  --alert:#b3372f; --grey-text:#8b969d; --th:#dcebe4; --tline:#aeb9bf;
   --sans:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --shadow:0 10px 30px rgba(16,32,40,.16);
 }
@@ -24,7 +24,7 @@
     --bg:#0f1417; --surface:#161d21; --sunk:#12181b; --ink:#e3e9ec; --ink2:#bcc7cd; --muted:#8c9aa2; --line:#2a353b; --line2:#222b30;
     --accent:#62b395; --accent-ink:#0f1417; --accent-soft:#15302a; --accent-line:#2b5a4b;
     --warn:#e6b05c; --warn-soft:#2e2414; --warn-line:#5a4520;
-    --alert:#ec7a70; --grey-text:#6f7d85; --th:#1d262b; --shadow:0 10px 30px rgba(0,0,0,.55);
+    --alert:#ec7a70; --grey-text:#6f7d85; --th:#1b3029; --tline:#465359; --shadow:0 10px 30px rgba(0,0,0,.55);
   }
 }
 *{box-sizing:border-box}
@@ -148,10 +148,11 @@ main.wrap{display:flex;flex-direction:column;gap:14px;padding-block:14px 32px}
 .gb li{margin:1px 0}
 .gb li p{margin:0}
 .gb strong{font-weight:600}
-.gb table{border-collapse:collapse;margin:8px 0;font-size:12.5px;min-width:50%}
-.gb td{border:1px solid var(--line);padding:4px 7px;vertical-align:top}
+.gb table{border-collapse:collapse;margin:8px 0;font-size:12.5px;min-width:50%;border:1px solid var(--tline)}
+.gb td{border:1px solid var(--tline);padding:5px 8px;vertical-align:top;line-height:1.45;min-width:5.5em}
 .gb td p{margin:0}
-.gb tr:first-child td{background:var(--th);font-weight:600}
+.gb tr:first-child td{background:var(--th);font-weight:600;border-bottom:2px solid var(--tline)}
+.gb tr:not(:first-child):hover td{background:var(--sunk)}
 .gb .muted{color:var(--grey-text)}
 .gb .alert{color:var(--alert);font-weight:600}
 .gb img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff;margin:6px 0}

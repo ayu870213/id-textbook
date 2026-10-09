@@ -1,0 +1,924 @@
+{
+ "drugs": [
+  {
+   "id": "ampicillin",
+   "name": "ampicillin",
+   "brand": "Penbrex 500mg",
+   "class": "Aminopenicillin",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >50",
+       "lo": 51,
+       "hi": null,
+       "dose": "1-2g q4-6h",
+       "cell": "D10:E10",
+       "shared": false
+      },
+      {
+       "text": "CrCl 30-50",
+       "lo": 30,
+       "hi": 50,
+       "dose": "1-2g q6-8h",
+       "cell": "F10",
+       "shared": false
+      },
+      {
+       "text": "CrCl 10-30",
+       "lo": 10,
+       "hi": 30,
+       "dose": "1-2g q8-12h",
+       "cell": "G10",
+       "shared": false
+      },
+      {
+       "text": "CrCl <10",
+       "lo": null,
+       "hi": 9,
+       "dose": "1-2g q12-24h",
+       "cell": "H10",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "1-2g q12h\n(give one of the dialysis day doses AD)",
+       "cell": "I10",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "0.5-1g q12h",
+       "cell": "J10",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "1-2g q8-12h",
+       "cell": "K10",
+       "shared": false
+      }
+     },
+     "src_row": 10
+    }
+   ],
+   "weight": null,
+   "weight_label": null,
+   "note": null
+  },
+  {
+   "id": "ampicillin-sulbactam",
+   "name": "ampicillin/sulbactam",
+   "brand": "Rukasyn 750mg",
+   "class": "Aminopenicillin",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl ≥30",
+       "lo": 30,
+       "hi": null,
+       "dose": "3g q6h",
+       "cell": "D12:F12",
+       "shared": false
+      },
+      {
+       "text": "CrCl 15-29",
+       "lo": 15,
+       "hi": 29,
+       "dose": "1.5-3g q12h",
+       "cell": "G12",
+       "shared": false
+      },
+      {
+       "text": "CrCl 5-14",
+       "lo": 5,
+       "hi": 14,
+       "dose": "1.5-3g q24h",
+       "cell": "H12",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "1.5-3g q24h\n(AD on dialysis days)",
+       "cell": "I12",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "3g q24h",
+       "cell": "J12",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "1.5-3g q8-12h",
+       "cell": "K12",
+       "shared": false
+      }
+     },
+     "src_row": 12
+    },
+    {
+     "label": "prolonged infusion",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl ≥30",
+       "lo": 30,
+       "hi": null,
+       "dose": "9g (over 4hr) q8h",
+       "cell": "D13:F13",
+       "shared": false
+      },
+      {
+       "text": "CrCl 15-29",
+       "lo": 15,
+       "hi": 29,
+       "dose": "6g (over 4hr) q8h",
+       "cell": "G13",
+       "shared": false
+      },
+      {
+       "text": "CrCl 5-14",
+       "lo": 5,
+       "hi": 14,
+       "dose": "6g (over 4hr) q12h",
+       "cell": "H13",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "6g (over 4hr) q12h\n(AD on dialysis days)",
+       "cell": "I13",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "3g q24h",
+       "cell": "J13",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "9g (over 4hr) q8h",
+       "cell": "K13",
+       "shared": false
+      }
+     },
+     "src_row": 13
+    }
+   ],
+   "weight": null,
+   "weight_label": null,
+   "note": null
+  },
+  {
+   "id": "cefepime",
+   "name": "cefepime",
+   "brand": "Maxipime 1g",
+   "class": "4세대",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >60",
+       "lo": 61,
+       "hi": null,
+       "dose": "2g q8h",
+       "cell": "D25:E25",
+       "shared": false
+      },
+      {
+       "text": "CrCl 30-60",
+       "lo": 30,
+       "hi": 60,
+       "dose": "2g q12h",
+       "cell": "F25",
+       "shared": false
+      },
+      {
+       "text": "CrCl 11-29",
+       "lo": 11,
+       "hi": 29,
+       "dose": "2g q24h",
+       "cell": "G25",
+       "shared": false
+      },
+      {
+       "text": "CrCl <10",
+       "lo": null,
+       "hi": 9,
+       "dose": "1g q24h",
+       "cell": "H25",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "1g q24h\n(AD on dialysis days)",
+       "cell": "I25",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "2g q48h",
+       "cell": "J25",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "Dose per EFR*:\n1L/hr: 1g q8h\n≥2L/hr:1g q6h (주로)",
+       "cell": "K25",
+       "shared": false
+      }
+     },
+     "src_row": 25
+    },
+    {
+     "label": "prolonged infusion",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >50",
+       "lo": 51,
+       "hi": null,
+       "dose": "2g (over 4hr) q8h",
+       "cell": "D27:E27",
+       "shared": false
+      },
+      {
+       "text": "CrCl 30-49",
+       "lo": 30,
+       "hi": 49,
+       "dose": null,
+       "cell": "F27",
+       "shared": false
+      },
+      {
+       "text": "CrCl 15-29",
+       "lo": 15,
+       "hi": 29,
+       "dose": null,
+       "cell": "G27",
+       "shared": false
+      },
+      {
+       "text": "CrCl <15",
+       "lo": null,
+       "hi": 14,
+       "dose": null,
+       "cell": "H27",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": null,
+       "cell": "I27",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": null,
+       "cell": "J27",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": null,
+       "cell": "K27",
+       "shared": false
+      }
+     },
+     "src_row": 27
+    }
+   ],
+   "weight": null,
+   "weight_label": null,
+   "note": "* EFR = DFR (1000) + Post (500) + Pt removal (60) + PBP (500) = 2060mL/hr"
+  },
+  {
+   "id": "piperacillin-tazobactam",
+   "name": "piperacillin/tazobactam",
+   "brand": "Tazolactam 2.25g\nTazolactam 4.5g",
+   "class": "BL/BLI",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >40",
+       "lo": 41,
+       "hi": null,
+       "dose": "3.375g q6h",
+       "cell": "D31:E31",
+       "shared": false
+      },
+      {
+       "text": "CrCl 20-40",
+       "lo": 20,
+       "hi": 40,
+       "dose": "2.25g q6h",
+       "cell": "F31",
+       "shared": false
+      },
+      {
+       "text": "CrCl <20",
+       "lo": null,
+       "hi": 19,
+       "dose": "2.25g q8h",
+       "cell": "G31:H31",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "2.25g q12h\n(+extra 0.75g AD on dialysis days)",
+       "cell": "I31",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "2.25g q12h",
+       "cell": "J31",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "3.375-4.5g q6h",
+       "cell": "K31",
+       "shared": false
+      }
+     },
+     "src_row": 31
+    },
+    {
+     "label": "nosocomial pneumonia",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >40",
+       "lo": 41,
+       "hi": null,
+       "dose": "4.5g q6h",
+       "cell": "D32:E32",
+       "shared": false
+      },
+      {
+       "text": "CrCl 20-40",
+       "lo": 20,
+       "hi": 40,
+       "dose": "3.375g q6h",
+       "cell": "F32",
+       "shared": false
+      },
+      {
+       "text": "CrCl <20",
+       "lo": null,
+       "hi": 19,
+       "dose": "2.25g q6h",
+       "cell": "G32:H32",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "2.25g q8h\n(+extra 0.75g AD on dialysis days)",
+       "cell": "I32",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "2.25g q8h",
+       "cell": "J32",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "3.375-4.5g q6h",
+       "cell": "K32",
+       "shared": false
+      }
+     },
+     "src_row": 32
+    },
+    {
+     "label": "prolonged infusion",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >40",
+       "lo": 41,
+       "hi": null,
+       "dose": "4.5g (over 4hr) q8h",
+       "cell": "D33:F33",
+       "shared": true
+      },
+      {
+       "text": "CrCl 20-40",
+       "lo": 20,
+       "hi": 40,
+       "dose": "4.5g (over 4hr) q8h",
+       "cell": "D33:F33",
+       "shared": false
+      },
+      {
+       "text": "CrCl <20",
+       "lo": null,
+       "hi": 19,
+       "dose": "4.5g (over 4hr) q12h",
+       "cell": "G33:H33",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "4.5g (over 4hr) q12h",
+       "cell": "I33",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "no data",
+       "cell": "J33",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "3.375-4.5g (over 4hr) q8h",
+       "cell": "K33",
+       "shared": false
+      }
+     },
+     "src_row": 33
+    }
+   ],
+   "weight": null,
+   "weight_label": null,
+   "note": null
+  },
+  {
+   "id": "amikacin",
+   "name": "amikacin",
+   "brand": "Amikacin 250mg\nAmikacin 500mg",
+   "class": "Aminoglycoside",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "conventional",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >50",
+       "lo": 51,
+       "hi": null,
+       "dose": "7.5mg/kg q12h",
+       "cell": "D59:E59",
+       "shared": false
+      },
+      {
+       "text": "CrCl 10-50",
+       "lo": 10,
+       "hi": 50,
+       "dose": "7.5mg/kg q24h",
+       "cell": "F59:G59",
+       "shared": false
+      },
+      {
+       "text": "CrCl <10",
+       "lo": null,
+       "hi": 9,
+       "dose": "7.5mg/kg q48h",
+       "cell": "H59",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "7.5mg/kg q48h\n(+extra 3.75mg/kg AD)",
+       "cell": "I59",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "for peritonitis only\n2mg/kg IP once daily",
+       "cell": "J59",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": null,
+       "cell": "K59",
+       "shared": false
+      }
+     },
+     "src_row": 59
+    },
+    {
+     "label": "extended-interval",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >60",
+       "lo": 61,
+       "hi": null,
+       "dose": "15-20mg/kg q24h",
+       "cell": "D61:E61",
+       "shared": false
+      },
+      {
+       "text": "CrCl 40-59",
+       "lo": 40,
+       "hi": 59,
+       "dose": "15-20mg/kg q36h",
+       "cell": "F61",
+       "shared": false
+      },
+      {
+       "text": "CrCl 20-39",
+       "lo": 20,
+       "hi": 39,
+       "dose": "15-20mg/kg q48h",
+       "cell": "G61",
+       "shared": false
+      },
+      {
+       "text": "CrCl <20",
+       "lo": null,
+       "hi": 19,
+       "dose": null,
+       "cell": "H61",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": null,
+       "cell": "I61",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": null,
+       "cell": "J61",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "25mg/kg q48h",
+       "cell": "K61",
+       "shared": false
+      }
+     },
+     "src_row": 61
+    }
+   ],
+   "weight": "IBW_AG",
+   "weight_label": "IBW (TBW<IBW이면 TBW, TBW>IBW×120%이면 AdjBW)",
+   "note": null
+  },
+  {
+   "id": "teicoplanin",
+   "name": "teicoplanin",
+   "brand": "Tapocin 400mg\nTeiconin 400mg",
+   "class": "Glycopeptide",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "non-complicated MRSA Inf (target 15-30ug/mL)",
+     "basis": "eGFR",
+     "bands": [
+      {
+       "text": "eGFR >60",
+       "lo": 61,
+       "hi": null,
+       "dose": "12mg/kg q12h on day 1,\nthen 12mg/kg x 1 on days 2 and 3,\nthen 6.0-6.7mg/kg q24hr",
+       "cell": "D72:E72",
+       "shared": false
+      },
+      {
+       "text": "eGFR 30-60",
+       "lo": 30,
+       "hi": 60,
+       "dose": "D1: 12mg/kg q12h,\nD2: 10mg/kg x 1,\nD3: 6-6.7mg/kg x 1,\nthen 3-3.3mg/kg q24h",
+       "cell": "F72",
+       "shared": false
+      },
+      {
+       "text": "eGFR <30",
+       "lo": null,
+       "hi": 29,
+       "dose": "D1: 12mg/kg q12h,\nD2: 5mg/kg x 1,\nD3: 5mg/kg x 1,\nthen 5mg/kg q48h",
+       "cell": "G72:H72",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "not removed by HD\n(use recs for eGFR <30)",
+       "cell": "I72",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "no data",
+       "cell": "J72",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "D1: 10mg/kg q12h,\nD2: 10mg/kg x 1,\nD3: 10mg/kg x 1,\nthen 3-3.3mg/kg q24h",
+       "cell": "K72",
+       "shared": false
+      }
+     },
+     "src_row": 72
+    },
+    {
+     "label": "complicated MRSA Inf (target 20-40ug/mL)",
+     "basis": "eGFR",
+     "bands": [
+      {
+       "text": "eGFR >60",
+       "lo": 61,
+       "hi": null,
+       "dose": "12mg/kg q12h on day 1 and 2,\nthen 12mg/kg x 1 on day 3,\nthen 6.0-6.7mg/kg q24hr",
+       "cell": "D73:E73",
+       "shared": false
+      },
+      {
+       "text": "eGFR 30-60",
+       "lo": 30,
+       "hi": 60,
+       "dose": "D1: 12mg/kg q12h,\nD2: 12mg/kg x 1,\nD3: 12mg/kg x 1,\nthen 5mg/kg q24h",
+       "cell": "F73",
+       "shared": false
+      },
+      {
+       "text": "eGFR <30",
+       "lo": null,
+       "hi": 29,
+       "dose": "D1: 12mg/kg q12h,\nD2: 12mg/kg x 1,\nD3: 6-6.7mg/kg x 1,\nthen 3-3.3mg/kg q24h",
+       "cell": "G73:H73",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "not removed by HD\n(use recs for eGFR <30)",
+       "cell": "I73",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "no data",
+       "cell": "J73",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "D1: 12mg/kg q12h,\nD2: 12mg/kg x 1,\nD3: 12mg/kg x 1,\nthen 3-3.3mg/kg q24h",
+       "cell": "K73",
+       "shared": false
+      }
+     },
+     "src_row": 73
+    }
+   ],
+   "weight": "TBW",
+   "weight_label": "TBW",
+   "note": null
+  },
+  {
+   "id": "vancomycin",
+   "name": "vancomycin",
+   "brand": "Hynomycin 500mg\nVancocin CP 1g",
+   "class": "Glycopeptide",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >100",
+       "lo": 101,
+       "hi": null,
+       "dose": "20-30mg/kg (max 3g),\nthen 15-20mg/kg q8h",
+       "cell": "D75:D76",
+       "shared": false
+      },
+      {
+       "text": "CrCl 50-100",
+       "lo": 50,
+       "hi": 100,
+       "dose": "20-30mg/kg (max 3g),\nthen 15-20mg/kg q12h",
+       "cell": "E75:E76",
+       "shared": false
+      },
+      {
+       "text": "CrCl 20-50",
+       "lo": 20,
+       "hi": 50,
+       "dose": "20-30mg/kg (max 3g),\nthen 15-20mg/kg q24h",
+       "cell": "F75:G76",
+       "shared": false
+      },
+      {
+       "text": "CrCl <20",
+       "lo": null,
+       "hi": 19,
+       "dose": "20-30mg/kg (max 3g),\nthen 15-20mg/kg q48h",
+       "cell": "H75:H76",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "Post-HD dosing\nLow permeability: 25mg/kg, then 7.5mg/kg AD\nHigh permeability: 25mg/kg, then 10mg/kg AD\n\nIntradialytic dosing\nLow permeability: 30mg/kg, then 7.5-10mg/kg\nHigh permeability: 30mg/kg, then 10-15mg/kg",
+       "cell": "I75, I76",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "7.5mg/kg q48-96h",
+       "cell": "J75:J76",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "20-25mg/kg,\nthen 7.5-10mg/kg q12h",
+       "cell": "K75:K76",
+       "shared": false
+      }
+     },
+     "src_row": 75
+    }
+   ],
+   "weight": "TBW",
+   "weight_label": "TBW",
+   "note": null
+  },
+  {
+   "id": "linezolid",
+   "name": "linezolid",
+   "brand": "Zyvox 600mg",
+   "class": "Oxazolidinones",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "eGFR",
+     "bands": [
+      {
+       "text": "eGFR >60",
+       "lo": 61,
+       "hi": null,
+       "dose": "600mg q12h",
+       "cell": "D79:E79",
+       "shared": false
+      },
+      {
+       "text": "eGFR <60",
+       "lo": null,
+       "hi": 59,
+       "dose": "no dosage adjustment (product labeling)\ndebated: 300mg q12h for eGFR<60",
+       "cell": "F79:H79",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "600mg q12h\n(dose AD)",
+       "cell": "I79",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "600mg q12h",
+       "cell": "J79",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "600mg q12h",
+       "cell": "K79",
+       "shared": false
+      }
+     },
+     "src_row": 79
+    }
+   ],
+   "weight": null,
+   "weight_label": null,
+   "note": null
+  },
+  {
+   "id": "trimethoprim-sulfamethoxazole",
+   "name": "trimethoprim/sulfamethoxazole",
+   "brand": "Bactrim 400/80mg\nCotrim 400/80mg",
+   "class": "Sulfonamides",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >30",
+       "lo": 31,
+       "hi": null,
+       "dose": "10-20mg/kg\ndivided q6-12h",
+       "cell": "D84:F84",
+       "shared": false
+      },
+      {
+       "text": "CrCl 10-30",
+       "lo": 10,
+       "hi": 30,
+       "dose": "5-10mg/kg\ndivided q12h",
+       "cell": "G84",
+       "shared": false
+      },
+      {
+       "text": "CrCl <10",
+       "lo": null,
+       "hi": 9,
+       "dose": "not recommend\nif used: 5-10mg/kg q24h",
+       "cell": "H84",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "not recommended\nif used: 5-10mg/kg q24h, AD on dialysis day",
+       "cell": "I84",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "not recommended\nif used: 5-10mg/kg q24h",
+       "cell": "J84",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "5mg/kg q8h",
+       "cell": "K84",
+       "shared": false
+      }
+     },
+     "src_row": 84
+    }
+   ],
+   "weight": "TBW_OBESE_ADJ",
+   "weight_label": "TBW (TBW>IBW×120%이면 AdjBW)",
+   "note": null
+  },
+  {
+   "id": "colistin",
+   "name": "colistin",
+   "brand": "Colistimethate 150mg",
+   "class": "Polymyxins",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >30",
+       "lo": 31,
+       "hi": null,
+       "dose": "Load 4mg/kg,\nthen CrCl ≥90: 180mg q12h\nCrCl 80-90: 170mg q12h\nCrCl 70-80: 150mg q12h\nCrCl 60-70: 137.5mg q12h\nCrCl 50-60: 122.5mg q12h\nCrCl 40-50: 110mg q12h\nCrCl 30-40: 97.5mg q12h\nCrCl 20-30: 87.5mg q12h\nCrCl 10-20: 80mg q12h\nCrCl 5-10: 72.5mg q12h\nCrCl <5: 65mg q12h",
+       "cell": "D85:H86",
+       "shared": true
+      },
+      {
+       "text": "CrCl 10-30",
+       "lo": 10,
+       "hi": 30,
+       "dose": "Load 4mg/kg,\nthen CrCl ≥90: 180mg q12h\nCrCl 80-90: 170mg q12h\nCrCl 70-80: 150mg q12h\nCrCl 60-70: 137.5mg q12h\nCrCl 50-60: 122.5mg q12h\nCrCl 40-50: 110mg q12h\nCrCl 30-40: 97.5mg q12h\nCrCl 20-30: 87.5mg q12h\nCrCl 10-20: 80mg q12h\nCrCl 5-10: 72.5mg q12h\nCrCl <5: 65mg q12h",
+       "cell": "D85:H86",
+       "shared": true
+      },
+      {
+       "text": "CrCl <10",
+       "lo": null,
+       "hi": 9,
+       "dose": "Load 4mg/kg,\nthen CrCl ≥90: 180mg q12h\nCrCl 80-90: 170mg q12h\nCrCl 70-80: 150mg q12h\nCrCl 60-70: 137.5mg q12h\nCrCl 50-60: 122.5mg q12h\nCrCl 40-50: 110mg q12h\nCrCl 30-40: 97.5mg q12h\nCrCl 20-30: 87.5mg q12h\nCrCl 10-20: 80mg q12h\nCrCl 5-10: 72.5mg q12h\nCrCl <5: 65mg q12h",
+       "cell": "D85:H86",
+       "shared": false
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "HD\n\nOn non-HD days: give 65mg q12h\nOn HD days: give supplemental dose of 40-50mg after a 3-4hr session. Give this supplement with the next regular dose after the dialysis has ended.",
+       "cell": "I85, I86",
+       "shared": false
+      },
+      "CAPD": {
+       "dose": "CAPD\n\nno data",
+       "cell": "J85, J86",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "CRRT\n\n220mg q12h",
+       "cell": "K85, K86",
+       "shared": false
+      }
+     },
+     "src_row": 85
+    }
+   ],
+   "weight": "MIN_IBW_TBW",
+   "weight_label": "IBW와 TBW 중 작은 값 (부하용량)",
+   "note": null
+  }
+ ]
+}

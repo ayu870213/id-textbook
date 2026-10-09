@@ -29,7 +29,7 @@ const app = w.__app;
 const $ = id => w.document.getElementById(id);
 
 function patient({ sex, age, wt, ht, scr, rrt = '' }) {
-  w.document.getElementById(sex === 'F' ? 'sx-f' : 'sx-m').checked = true;
+  $('sx-m').checked = sex === 'M'; $('sx-f').checked = sex === 'F';
   $('age').value = age; $('wt').value = wt; $('ht').value = ht; $('cr').value = scr; $('rrt').value = rrt;
   app.renderP();
   return app.P;
@@ -56,9 +56,27 @@ for (const [i, c] of CASES.entries()) {
   });
 }
 
-test('입력값 범위 밖이면 계산하지 않음', () => {
+test('처음 열면 성별 포함 모든 칸이 비어 있고, 오류 없이 입력 안내만 표시', () => {
+  const w2 = load(), d = w2.document;
+  for (const id of ['age', 'wt', 'ht', 'cr']) assert.equal(d.getElementById(id).value, '', id);
+  assert.equal(d.querySelector('input[name=sex]:checked'), null);
+  assert.equal(w2.__app.P, null);
+  assert.equal(d.getElementById('perr').textContent, '');
+  assert.match(d.getElementById('dOut').textContent, /환자 정보를 입력하면.*남은 항목: 성별, 나이, 체중, 키, SCr/);
+  assert.equal(d.querySelector('#dOut tr.hit, #dOut tr.amb'), null, '입력 전에는 강조된 구간이 없어야 함');
+});
+
+test('성별만 빠져도 계산하지 않음', () => {
+  assert.equal(patient({ ...CASES[0].p, sex: null }), null);
+  assert.equal($('perr').textContent, '');
+  assert.match($('dOut').textContent, /남은 항목: 성별\s/);
+});
+
+test('입력값 범위 밖이면 계산하지 않고 빨간 문구로 알림', () => {
   assert.equal(patient({ sex: 'M', age: 15, wt: 60, ht: 170, scr: 1 }), null);
+  assert.match($('perr').textContent, /나이\(18–120\)/);
   assert.equal(patient({ sex: 'M', age: 50, wt: 60, ht: 170, scr: 0 }), null);
+  assert.match($('perr').textContent, /SCr/);
 });
 
 // ---------------------------------------------------------------- 구간 판정

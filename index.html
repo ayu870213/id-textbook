@@ -185,12 +185,12 @@ footer p{margin:2px 0}
   <form class="wrap" id="pf" novalidate>
     <div class="brand"><b>감염내과 참고서</b><span>항생제 용량 · 질환별 가이드</span></div>
     <div class="f"><span>성별</span><div class="seg">
-      <input type="radio" name="sex" id="sx-m" value="m" checked><label for="sx-m">남</label>
+      <input type="radio" name="sex" id="sx-m" value="m"><label for="sx-m">남</label>
       <input type="radio" name="sex" id="sx-f" value="f"><label for="sx-f">여</label></div></div>
-    <label class="f"><span>나이</span><div class="box"><input id="age" type="number" inputmode="numeric" value="72"><em>세</em></div></label>
-    <label class="f"><span>체중</span><div class="box"><input id="wt" type="number" inputmode="decimal" step="0.1" value="84"><em>kg</em></div></label>
-    <label class="f"><span>키</span><div class="box"><input id="ht" type="number" inputmode="decimal" step="0.1" value="168"><em>cm</em></div></label>
-    <label class="f"><span>SCr</span><div class="box"><input id="cr" type="number" inputmode="decimal" step="0.01" value="1.6"><em>mg/dL</em></div></label>
+    <label class="f"><span>나이</span><div class="box"><input id="age" type="number" inputmode="numeric"><em>세</em></div></label>
+    <label class="f"><span>체중</span><div class="box"><input id="wt" type="number" inputmode="decimal" step="0.1"><em>kg</em></div></label>
+    <label class="f"><span>키</span><div class="box"><input id="ht" type="number" inputmode="decimal" step="0.1"><em>cm</em></div></label>
+    <label class="f"><span>SCr</span><div class="box"><input id="cr" type="number" inputmode="decimal" step="0.01"><em>mg/dL</em></div></label>
     <label class="f"><span>투석</span><div class="box"><select id="rrt"><option value="">없음</option><option value="HD">HD</option><option value="CAPD">CAPD</option><option value="CRRT">CRRT</option></select></div></label>
     <div class="renal">
       <div class="kv"><small>CrCl (C-G)</small><b id="vCrcl">–<i>mL/min</i></b><span class="why" id="vWhy"></span></div>
@@ -250,17 +250,20 @@ const M = DATA.meta;
 if(M?.drugs_source) $('src').textContent = `원본: 용량표 ${M.drugs_source} (${M.drugs_uploaded} 업로드) · 가이드 ${M.guides_source} (${M.guides_uploaded} 업로드)`;
 
 /* ---------- 환자 계산 ---------- */
-let P = null;
+let P = null, missing = [];
 function calc(){
-  const sex = document.querySelector('input[name=sex]:checked').value;
+  const sex = document.querySelector('input[name=sex]:checked')?.value;
   const age=+$('age').value, wt=+$('wt').value, ht=+$('ht').value, scr=+$('cr').value, rrt=$('rrt').value;
-  const e=[];
-  if(!(age>=18&&age<=120)) e.push('나이(18–120)');
-  if(!(wt>0)) e.push('체중');
-  if(!(ht>=100&&ht<=250)) e.push('키(100–250 cm)');
-  if(!(scr>0)) e.push('SCr');
+  // 빈 칸은 '남은 항목', 범위를 벗어난 값은 빨간 '입력 확인'
+  const blank = id => $(id).value.trim()==='';
+  missing=[]; const e=[];
+  if(!sex) missing.push('성별');
+  for(const [id,name,ok,msg] of [['age','나이',age>=18&&age<=120,'나이(18–120)'],['wt','체중',wt>0,'체중'],
+                                 ['ht','키',ht>=100&&ht<=250,'키(100–250 cm)'],['cr','SCr',scr>0,'SCr']]){
+    if(blank(id)) missing.push(name); else if(!ok) e.push(msg);
+  }
   $('perr').textContent = e.length ? '입력 확인: '+e.join(', ') : '';
-  if(e.length) return null;
+  if(e.length||missing.length) return null;
   const inch=ht/2.54, ibw=(sex==='m'?50:45.5)+2.3*(inch-60), adj=ibw+0.4*(wt-ibw), bmi=wt/(ht/100)**2;
   const cg = w => (140-age)*w/(72*scr)*(sex==='f'?0.85:1);
   let key, why;
@@ -363,7 +366,7 @@ function renderDose(){
   let card='';
   const hitSet=new Set((J.all||J.hits||[]).map(b=>b.text));
   const doseTxt=t=>t==null?'자료 없음':t;
-  if(J.type==='nopt') card=`<div class="rec none"><div class="lab">권장 용량</div><div class="why">상단 환자 정보를 입력하세요.</div></div>`;
+  if(J.type==='nopt') card=`<div class="rec none"><div class="lab">권장 용량</div><div class="why">환자 정보를 입력하면 해당 구간을 표시합니다.${missing.length?` 남은 항목: ${missing.join(', ')}`:''}</div></div>`;
   else if(J.type==='dial') card=`<div class="rec ${J.dose?'':'none'}"><div class="lab">권장 용량 · ${J.key}</div><div class="dz">${esc(doseTxt(J.dose))}</div>${mgkgLines(J.dose,d)}</div>`;
   else if(J.type==='one'){ const b=J.hits[0]; const sub=subLines(b.dose,J.v);
     card=`<div class="rec ${b.dose?'':'none'}"><div class="lab">권장 용량 · ${basisTxt}</div><div class="dz">${sub||esc(doseTxt(b.dose))}</div><div class="why">${reg.basis} ${J.v} → ${esc(b.text)}</div>${mgkgLines(b.dose,d)}</div>`; }

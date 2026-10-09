@@ -17,7 +17,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: 용량 계산 test
+        run: |
+          npm ci
+          npm test
+
   build:
+    needs: test   # 계산 test를 통과해야 배포
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.build.outputs.changed }}

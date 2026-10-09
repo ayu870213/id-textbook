@@ -9,14 +9,20 @@ const root = new URL('../', import.meta.url);
 const drugs = JSON.parse(readFileSync(new URL('tests/fixtures/drugs.json', root), 'utf8')).drugs;
 const guides = [{ id: 's01', group: '질환', title: '테스트', subsections: [], html: '<p>본문</p>' }];
 
+// web/index.html을 열되, 외부 스크립트(renal.js, app.js)는 내용을 직접 끼워 넣고 데이터는 window.__DATA__로 준다
 function load() {
-  const html = readFileSync(new URL('web/index.html', root), 'utf8');
-  const marker = 'const EMBED=/*__DATA__*/null;';
-  assert.ok(html.includes(marker), 'index.html에 데이터 삽입 위치가 없음');
+  let html = readFileSync(new URL('web/index.html', root), 'utf8');
+  for (const f of ['renal.js', 'app.js']) {
+    const tag = `<script src="${f}"></script>`;
+    assert.ok(html.includes(tag), `index.html에 ${tag} 없음`);
+    const src = readFileSync(new URL(`web/${f}`, root), 'utf8');
+    html = html.replace(tag, () => `<script>${src}</script>`);
+  }
   const data = { revised: '2026-01-01', meta: {}, drugs, guides };
-  const dom = new JSDOM(html.replace(marker, `const EMBED=${JSON.stringify(data)};`), {
+  const dom = new JSDOM(html, {
     runScripts: 'dangerously',
     beforeParse(w) {
+      w.__DATA__ = data;
       w.matchMedia = () => ({ matches: false });
       w.HTMLElement.prototype.scrollTo = () => {};
     },
@@ -176,7 +182,7 @@ test('config/rules.json의 체중 규칙이 화면 계산에 모두 구현되어
   const rules = JSON.parse(readFileSync(new URL('config/rules.json', root), 'utf8'));
   patient(CASES[0].p);
   for (const rule of Object.keys(rules.weight_rules)) {
-    assert.ok(app.doseWeight({ weight: rule }), `${rule}: index.html의 doseWeight()에 없음`);
+    assert.ok(app.doseWeight({ weight: rule }), `${rule}: web/renal.js의 doseWeight()에 없음`);
   }
 });
 

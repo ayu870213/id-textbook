@@ -6,7 +6,7 @@
 로컬 테스트:  python scripts/build.py --xlsx 용량.xlsx --docx 가이드.docx --out _site
 GitHub 자동화: 환경변수 GDRIVE_SA_KEY, GDRIVE_FOLDER_ID 사용
 """
-import argparse, base64, datetime as dt, hashlib, io, json, os, re, shutil, sys, urllib.request
+import argparse, datetime as dt, hashlib, io, json, os, re, shutil, sys, urllib.request
 import html as H
 
 import openpyxl
@@ -76,7 +76,10 @@ def fetch_from_drive(folder_id, workdir):
 
 # ---------------------------------------------------------------- 엑셀 → 용량 데이터
 RANGE_RE = re.compile(r'^(CrCl|eGFR)\s*(.*)$')
+# 엑셀 열 배치: A 계열, B 성분명, C 상품명, D–H 구간별 용량, I–K 투석 용량
+BAND_COLS = range(4, 9)
 DIAL = {9: 'HD', 10: 'CAPD', 11: 'CRRT'}
+DOSE_COLS = range(4, 12)
 WEIGHT = {
     'amikacin': ('IBW_AG', 'IBW (TBW<IBW이면 TBW, TBW>IBW×120%이면 AdjBW)'),
     'gentamicin': ('IBW_AG', 'IBW (TBW<IBW이면 TBW, TBW>IBW×120%이면 AdjBW)'),
@@ -126,7 +129,7 @@ def parse_xlsx(path):
             return s + (f':{L(a[3])}{a[2]}' if (a[2], a[3]) != (a[0], a[1]) else '')
         return f'{L(c)}{r}'
     def is_header(r):
-        return any((v := val(r, c)) and RANGE_RE.match(v.strip()) for c in range(4, 9))
+        return any((v := val(r, c)) and RANGE_RE.match(v.strip()) for c in BAND_COLS)
     def split_name(b):
         lines = [x.strip() for x in str(b).split('\n') if x.strip()]
         if lines[0].lower() == 'trimethoprim':
@@ -162,20 +165,18 @@ def parse_xlsx(path):
             notes.append(clean(A))
         if A and A != '계열' and anchor(r, 1) == (r, 1) and not str(A).strip().startswith(('*', '참고')) and B:
             cls = clean(A)
-        if A == '계열' or not B and not any(ws.cell(r, c).value for c in range(4, 12)):
+        if A == '계열' or not B and not any(ws.cell(r, c).value for c in DOSE_COLS):
             r += 1; continue
         if B and is_header(r):
             base, var = split_name(B)
-            if not header or cls is None:
-                pass
             drug = get_drug(base, clean(C))
-            groups, c = [], 4
-            while c <= 8:
+            groups, c = [], BAND_COLS[0]
+            while c <= BAND_COLS[-1]:
                 v, s = val(r, c), span(r, c)
                 if v and RANGE_RE.match(v.strip()):
                     basis, lo, hi = parse_range(clean(v))
                     groups.append({'text': clean(v), 'lo': lo, 'hi': hi, 'basis': basis,
-                                   'cols': list(range(max(s[0], 4), min(s[1], 8) + 1))})
+                                   'cols': list(range(max(s[0], BAND_COLS[0]), min(s[1], BAND_COLS[-1]) + 1))})
                 c = max(s[1], c) + 1
             header = {'basis': groups[0]['basis'], 'groups': groups}
             drug['regimens'].append(build_reg(var or '표준', r + 1))
@@ -184,9 +185,9 @@ def parse_xlsx(path):
             cur = drug; r += 2; continue
         if B:
             base, var = split_name(B)
-            if span(r, 4) == (4, 11):
-                d = get_drug(base, clean(C)); d['status'] = 'no_adjust'; d['single_dose'] = clean(val(r, 4))
-            elif not any(ws.cell(r, c).value for c in range(4, 12)):
+            if span(r, DOSE_COLS[0]) == (DOSE_COLS[0], DOSE_COLS[-1]):  # 용량 칸 전체가 병합: 신기능 조정 없음
+                d = get_drug(base, clean(C)); d['status'] = 'no_adjust'; d['single_dose'] = clean(val(r, DOSE_COLS[0]))
+            elif not any(ws.cell(r, c).value for c in DOSE_COLS):
                 d = get_drug(base, clean(C)); d['status'] = 'empty'
             else:
                 if header is None:
@@ -194,7 +195,7 @@ def parse_xlsx(path):
                 d = get_drug(base, clean(C)); d['regimens'].append(build_reg(var or '표준', r)); cur = d
             r += 1; continue
         if cur is not None:
-            if any(ws.cell(r, c).value for c in range(4, 9)):
+            if any(ws.cell(r, c).value for c in BAND_COLS):
                 cur['regimens'].append(build_reg(None, r))
             else:
                 for c, k in DIAL.items():
@@ -206,8 +207,7 @@ def parse_xlsx(path):
         r += 1
 
     for d in drugs:
-        if len(d['regimens']) > 1 and all(g['label'] in (None, '표준') for g in d['regimens'][1:]) \
-                and all(g['label'] is None for g in d['regimens'][1:]):
+        if len(d['regimens']) > 1 and all(g['label'] is None for g in d['regimens'][1:]):
             for g in d['regimens']:
                 g['label'] = g['bands'][0]['dose'] or g['label']
         for g in d['regimens']:
@@ -224,12 +224,12 @@ def parse_xlsx(path):
     missing = []
     for rr in range(1, last + 1):
         if ws.cell(rr, 1).value == '계열': continue
-        for c in range(4, 12):
+        for c in DOSE_COLS:
             cell = ws.cell(rr, c)
             if cell.value is None or isinstance(cell, openpyxl.cell.cell.MergedCell): continue
             v = str(cell.value).strip()
             if re.match(r'^(CrCl|eGFR|HD|CAPD|CRRT|Renal Dose)', v): continue
-            if (rr, c) in M and M[(rr, c)][3] == 11 and M[(rr, c)][1] == 4: continue
+            if (rr, c) in M and M[(rr, c)][1] == DOSE_COLS[0] and M[(rr, c)][3] == DOSE_COLS[-1]: continue
             if f'{L(c)}{rr}' not in used and rr > 3:
                 missing.append(f'{L(c)}{rr}')
     active = [d for d in drugs if d['status'] == 'active']
@@ -274,7 +274,8 @@ def convert_docx(path, img_dir):
         with image.open() as f: data = f.read()
         i = len(imgs)
         if image.content_type in ('image/jpeg', 'image/jpg'):
-            fn = f'fig{i + 1:02d}.jpg'; open(os.path.join(img_dir, fn), 'wb').write(data)
+            fn = f'fig{i + 1:02d}.jpg'
+            with open(os.path.join(img_dir, fn), 'wb') as f: f.write(data)
         else:
             im = Image.open(io.BytesIO(data))
             if im.mode not in ('RGB', 'RGBA'): im = im.convert('RGBA')
@@ -335,9 +336,11 @@ def main():
     else:
         xp, dp, sheet, doc = fetch_from_drive(os.environ['GDRIVE_FOLDER_ID'], work)
 
-    source_rev = hashlib.sha256((open(xp, 'rb').read() + open(dp, 'rb').read()
-                                 + open(os.path.join(ROOT, 'index.html'), 'rb').read()
-                                 + open(os.path.abspath(__file__), 'rb').read())).hexdigest()[:16]
+    def read(p):
+        with open(p, 'rb') as f: return f.read()
+    # 원본·화면·빌드 코드 중 하나라도 바뀌면 달라지는 값 (정기 확인 때 배포 여부 판단)
+    source_rev = hashlib.sha256(b''.join(read(p) for p in (
+        xp, dp, os.path.join(ROOT, 'index.html'), os.path.abspath(__file__)))).hexdigest()[:16]
     out = os.path.join(ROOT, a.out)
     shutil.rmtree(out, ignore_errors=True); os.makedirs(os.path.join(out, 'data'))
 
@@ -350,7 +353,9 @@ def main():
             'guides_source': doc['name'], 'guides_uploaded': kst_date(doc['createdTime']),
             'built_at': dt.datetime.now(KST).isoformat(timespec='minutes')}
 
-    dump = lambda o, f: json.dump(o, open(os.path.join(out, 'data', f), 'w', encoding='utf-8'), ensure_ascii=False)
+    def dump(o, name):
+        with open(os.path.join(out, 'data', name), 'w', encoding='utf-8') as f:
+            json.dump(o, f, ensure_ascii=False)
     dump({'source': sheet['name'], 'drugs': drugs}, 'drugs.json')
     dump({'source': doc['name'], 'sections': guides}, 'guides.json')
     dump(meta, 'meta.json')

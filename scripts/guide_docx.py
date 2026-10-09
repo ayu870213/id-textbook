@@ -22,6 +22,15 @@ def guide_group(title, rules):
     return rules['guide_group_default']
 
 
+def normalize_tables(html):
+    """표 칸을 모두 일반 칸(td)으로 통일한다.
+    구글 문서에서 내보낸 docx는 모든 행이 '머리 행'으로 표시되어 전부 th·thead로 나온다.
+    원본 형식(구글 문서/워드)과 관계없이 화면 스타일이 같게 적용되도록 한다."""
+    html = re.sub(r'</?thead>', '', html)
+    html = re.sub(r'<th(?=[\s>])', '<td', html)
+    return html.replace('</th>', '</td>')
+
+
 def convert_docx(path, img_dir, rules):
     d = docx.Document(path)
     st = d.styles.element
@@ -71,7 +80,7 @@ r[style-name='Alert Text'] => span.alert
 u => u
 """
     res = mammoth.convert_to_html(buf, style_map=style_map, convert_image=mammoth.images.img_element(conv))
-    parts = re.split(r'(<h1>.*?</h1>)', res.value)
+    parts = re.split(r'(<h1>.*?</h1>)', normalize_tables(res.value))
     out = []
     for i in range(1, len(parts), 2):
         title = H.unescape(re.sub('<[^>]+>', '', parts[i])).strip()

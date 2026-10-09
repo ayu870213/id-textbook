@@ -24,10 +24,17 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
       - name: 용량 계산 test
         run: |
           npm ci
           npm test
+      - name: 변환 test
+        run: |
+          pip install -r scripts/requirements.txt
+          python -m unittest discover tests
 
   build:
     needs: test   # 계산 test를 통과해야 배포

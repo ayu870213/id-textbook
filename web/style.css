@@ -137,10 +137,10 @@ main.wrap{display:flex;flex-direction:column;gap:14px;padding-block:14px 32px}
 .gb li p{margin:0}
 .gb strong{font-weight:600}
 .gb table{border-collapse:collapse;margin:8px 0;font-size:12.5px;min-width:50%;border:1px solid var(--tline)}
-.gb td{border:1px solid var(--tline);padding:5px 8px;vertical-align:top;line-height:1.45;min-width:5.5em}
-.gb td p{margin:0}
-.gb tr:first-child td{background:var(--th);font-weight:600;border-bottom:2px solid var(--tline)}
-.gb tr:not(:first-child):hover td{background:var(--sunk)}
+.gb td,.gb th{border:1px solid var(--tline);padding:5px 8px;vertical-align:top;line-height:1.45;min-width:5.5em;text-align:left;font-weight:inherit}
+.gb td p,.gb th p{margin:0}
+.gb tr:first-child>*{background:var(--th);font-weight:600;border-bottom:2px solid var(--tline)}
+.gb tr:not(:first-child):hover>*{background:var(--sunk)}
 .gb .muted{color:var(--grey-text)}
 .gb .alert{color:var(--alert);font-weight:600}
 .gb img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff;margin:6px 0}

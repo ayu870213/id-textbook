@@ -145,6 +145,42 @@ test('투석을 해제하면 다시 SCr이 필요함', () => {
   assert.match($('dOut').textContent, /남은 항목: SCr/);
 });
 
+// ---------------------------------------------------------------- 칸 안 CrCl별 용량 (colistin 등)
+const Renal = w.eval('Renal');
+const onLines = (text, v) => [...Renal.lineHits(text, v).filter(l => l.on).map(l => l.text)];
+
+test('colistin: 자기 구간 없이 칸 안 CrCl별 용량으로 판정 (이전 약의 구간을 빌려 쓰지 않음)', () => {
+  const r = reg('colistin');
+  assert.equal(r.bands.length, 1);
+  patient(CASES[0].p); // CrCl 43
+  const J = app.judge(r);
+  assert.equal(J.type, 'one');
+  assert.deepEqual(onLines(J.hits[0].dose, J.v), ['CrCl 40-50: 110mg q12h']);
+});
+
+test('colistin: 경계값은 한 줄만 (80 to <90 방식)', () => {
+  const t = reg('colistin').bands[0].dose;
+  assert.deepEqual(onLines(t, 90), ['then CrCl ≥90: 180mg q12h']);
+  assert.deepEqual(onLines(t, 80), ['CrCl 80-90: 170mg q12h']);
+  assert.deepEqual(onLines(t, 10), ['CrCl 10-20: 80mg q12h']);
+  assert.deepEqual(onLines(t, 5), ['CrCl 5-10: 72.5mg q12h']);
+  assert.deepEqual(onLines(t, 4), ['CrCl <5: 65mg q12h']);
+  for (let v = 0; v <= 150; v++) assert.equal(onLines(t, v).length, 1, `CrCl ${v}`);
+});
+
+test('colistin: 투석 용량에 머리 글자(HD/CAPD/CRRT)가 섞이지 않음', () => {
+  const d = reg('colistin').dialysis;
+  assert.match(d.HD.dose, /^On non-HD days/);
+  assert.equal(d.CAPD.dose, 'no data');
+  assert.equal(d.CRRT.dose, '220mg q12h');
+});
+
+test('ceftazidime-avibactam: "6-15" 다음 줄이 ">15"이면 15는 6-15에 속함', () => {
+  const t = reg('ceftazidime-avibactam').bands.at(-1).dose;
+  assert.deepEqual(onLines(t, 15), ['CrCl 6-15(±HD): 0.94g q24h']);
+  assert.deepEqual(onLines(t, 16), ['CrCl >15+HD: 0.94g q24h']);
+});
+
 // ---------------------------------------------------------------- mg/kg
 const mgkg = (id, text) => app.mgkgLines(text, drug(id)).replace(/<[^>]+>/g, '');
 

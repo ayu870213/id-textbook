@@ -870,27 +870,12 @@
     {
      "label": "표준",
      "basis": "CrCl",
+     "src_row": 85,
      "bands": [
       {
-       "text": "CrCl >30",
-       "lo": 31,
-       "hi": null,
-       "dose": "Load 4mg/kg,\nthen CrCl ≥90: 180mg q12h\nCrCl 80-90: 170mg q12h\nCrCl 70-80: 150mg q12h\nCrCl 60-70: 137.5mg q12h\nCrCl 50-60: 122.5mg q12h\nCrCl 40-50: 110mg q12h\nCrCl 30-40: 97.5mg q12h\nCrCl 20-30: 87.5mg q12h\nCrCl 10-20: 80mg q12h\nCrCl 5-10: 72.5mg q12h\nCrCl <5: 65mg q12h",
-       "cell": "D85:H86",
-       "shared": true
-      },
-      {
-       "text": "CrCl 10-30",
-       "lo": 10,
-       "hi": 30,
-       "dose": "Load 4mg/kg,\nthen CrCl ≥90: 180mg q12h\nCrCl 80-90: 170mg q12h\nCrCl 70-80: 150mg q12h\nCrCl 60-70: 137.5mg q12h\nCrCl 50-60: 122.5mg q12h\nCrCl 40-50: 110mg q12h\nCrCl 30-40: 97.5mg q12h\nCrCl 20-30: 87.5mg q12h\nCrCl 10-20: 80mg q12h\nCrCl 5-10: 72.5mg q12h\nCrCl <5: 65mg q12h",
-       "cell": "D85:H86",
-       "shared": true
-      },
-      {
-       "text": "CrCl <10",
+       "text": "CrCl별 (칸 안)",
        "lo": null,
-       "hi": 9,
+       "hi": null,
        "dose": "Load 4mg/kg,\nthen CrCl ≥90: 180mg q12h\nCrCl 80-90: 170mg q12h\nCrCl 70-80: 150mg q12h\nCrCl 60-70: 137.5mg q12h\nCrCl 50-60: 122.5mg q12h\nCrCl 40-50: 110mg q12h\nCrCl 30-40: 97.5mg q12h\nCrCl 20-30: 87.5mg q12h\nCrCl 10-20: 80mg q12h\nCrCl 5-10: 72.5mg q12h\nCrCl <5: 65mg q12h",
        "cell": "D85:H86",
        "shared": false
@@ -898,26 +883,93 @@
      ],
      "dialysis": {
       "HD": {
-       "dose": "HD\n\nOn non-HD days: give 65mg q12h\nOn HD days: give supplemental dose of 40-50mg after a 3-4hr session. Give this supplement with the next regular dose after the dialysis has ended.",
-       "cell": "I85, I86",
+       "dose": "On non-HD days: give 65mg q12h\nOn HD days: give supplemental dose of 40-50mg after a 3-4hr session. Give this supplement with the next regular dose after the dialysis has ended.",
+       "cell": "I86",
        "shared": false
       },
       "CAPD": {
-       "dose": "CAPD\n\nno data",
-       "cell": "J85, J86",
+       "dose": "no data",
+       "cell": "J86",
        "shared": false
       },
       "CRRT": {
-       "dose": "CRRT\n\n220mg q12h",
-       "cell": "K85, K86",
+       "dose": "220mg q12h",
+       "cell": "K86",
        "shared": false
       }
-     },
-     "src_row": 85
+     }
     }
    ],
    "weight": "MIN_IBW_TBW",
    "weight_label": "IBW와 TBW 중 작은 값 (부하용량)",
+   "note": null
+  },
+  {
+   "id": "ceftazidime-avibactam",
+   "name": "ceftazidime/avibactam",
+   "brand": "Zavicefta 2/0.5g",
+   "class": "BL/BLI",
+   "status": "active",
+   "regimens": [
+    {
+     "label": "표준",
+     "basis": "CrCl",
+     "bands": [
+      {
+       "text": "CrCl >50",
+       "lo": 51,
+       "hi": null,
+       "dose": "2.5g q8h",
+       "cell": "D41:E41",
+       "shared": false
+      },
+      {
+       "text": "CrCl 31-50",
+       "lo": 31,
+       "hi": 50,
+       "dose": "1.25g q8h",
+       "cell": "F41",
+       "shared": false
+      },
+      {
+       "text": "CrCl 16-30",
+       "lo": 16,
+       "hi": 30,
+       "dose": "0.94g q12h",
+       "cell": "G41",
+       "shared": false
+      },
+      {
+       "text": "CrCl <15",
+       "lo": null,
+       "hi": 14,
+       "dose": "CrCl >15+HD: 0.94g q24h\nCrCl 6-15(±HD): 0.94g q24h\nCrCl ≤5(±HD): 0.94g q48h\n(AD on dialysis days)",
+       "cell": "H41:I41",
+       "shared": true
+      }
+     ],
+     "dialysis": {
+      "HD": {
+       "dose": "CrCl >15+HD: 0.94g q24h\nCrCl 6-15(±HD): 0.94g q24h\nCrCl ≤5(±HD): 0.94g q48h\n(AD on dialysis days)",
+       "cell": "H41:I41",
+       "shared": true
+      },
+      "CAPD": {
+       "dose": "no data",
+       "cell": "J41",
+       "shared": false
+      },
+      "CRRT": {
+       "dose": "2.5g q8h",
+       "cell": "K41",
+       "shared": false
+      }
+     },
+     "src_row": 41
+    }
+   ],
+   "weight": null,
+   "weight_label": null,
    "note": null
   }
  ]

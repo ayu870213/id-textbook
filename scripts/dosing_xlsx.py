@@ -80,6 +80,20 @@ def parse_xlsx(path, rules):
         for c, k in DIAL.items():
             reg['dialysis'][k] = {'dose': clean(val(r, c)), 'cell': ref(r, c), 'shared': span(r, c)[0] < c}
         return reg
+    def is_in_cell_schedule(r):
+        """colistin 형식: 구간 칸(D–H) 전체가 병합된 한 칸에 'CrCl a-b: 용량' 줄들이 있고,
+        같은 줄의 투석 칸에는 HD/CAPD/CRRT 머리, 다음 줄에 투석 용량이 있다."""
+        v = val(r, BAND_COLS[0])
+        return (v and not RANGE_RE.match(v.strip())
+                and span(r, BAND_COLS[0]) == (BAND_COLS[0], BAND_COLS[-1])
+                and all(clean(val(r, c)) == k for c, k in DIAL.items()))
+    def in_cell_schedule_reg(label, r):
+        c0 = BAND_COLS[0]
+        return {'label': label, 'basis': 'CrCl', 'src_row': r,
+                'bands': [{'text': 'CrCl별 (칸 안)', 'lo': None, 'hi': None, 'dose': clean(val(r, c0)),
+                           'cell': ref(r, c0), 'shared': False}],
+                'dialysis': {k: {'dose': clean(val(r + 1, c)), 'cell': ref(r + 1, c), 'shared': False}
+                             for c, k in DIAL.items()}}
 
     notes = []
     r, last = 1, ws.max_row
@@ -113,6 +127,9 @@ def parse_xlsx(path, rules):
                 d = get_drug(base, clean(C)); d['status'] = 'no_adjust'; d['single_dose'] = clean(val(r, DOSE_COLS[0]))
             elif not any(ws.cell(r, c).value for c in DOSE_COLS):
                 d = get_drug(base, clean(C)); d['status'] = 'empty'
+            elif is_in_cell_schedule(r):
+                d = get_drug(base, clean(C)); d['regimens'].append(in_cell_schedule_reg(var or '표준', r))
+                cur = None; r += 2; continue
             else:
                 if header is None:
                     raise BuildError(f'{r}행 "{base}": 구간 줄(CrCl/eGFR) 없이 용량 줄이 나왔습니다.')

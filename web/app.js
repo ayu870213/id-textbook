@@ -49,9 +49,10 @@ function mgkgLines(text, d){
     `<div><b>${esc(r.expr)}</b> × ${f1(r.kg)} kg (${r.basis}) = <b>${v(r.lo)}${r.hi?'–'+v(r.hi):''} mg</b></div>`);
   return out.length?`<div class="wt">${out.join('')}</div>`:'';
 }
-function subLines(text, v){
+// 칸 안 CrCl별 용량: 표에는 전체를 두고 해당 줄 강조, 권장 용량 칸(onlyHit)에는 해당 줄과 조건 없는 줄(예: Load)만
+function subLines(text, v, onlyHit){
   const lines = Renal.lineHits(text, v);
-  return lines && lines.map(l=>`<span class="ln${l.on?' on':''}">${esc(l.text)||'&nbsp;'}</span>`).join('');
+  return lines && lines.filter(l=>!onlyHit||l.on||!l.crcl).map(l=>`<span class="ln${l.on?' on':''}">${esc(l.text)||'&nbsp;'}</span>`).join('');
 }
 
 /* ---------- 권장 용량 ---------- */
@@ -76,14 +77,14 @@ function renderDose(){
   const doseTxt=t=>t==null?'자료 없음':t;
   if(J.type==='nopt') card=`<div class="rec none"><div class="lab">권장 용량</div><div class="why">환자 정보를 입력하면 해당 구간을 표시합니다.${missing.length?` 남은 항목: ${missing.join(', ')}`:''}</div></div>`;
   else if(J.type==='dial') card=`<div class="rec ${J.dose?'':'none'}"><div class="lab">권장 용량 · ${J.key}</div><div class="dz">${esc(doseTxt(J.dose))}</div>${mgkgLines(J.dose,d)}</div>`;
-  else if(J.type==='one'){ const b=J.hits[0]; const sub=subLines(b.dose,J.v);
+  else if(J.type==='one'){ const b=J.hits[0]; const sub=subLines(b.dose,J.v,true);
     card=`<div class="rec ${b.dose?'':'none'}"><div class="lab">권장 용량 · ${basisTxt}</div><div class="dz">${sub||esc(doseTxt(b.dose))}</div><div class="why">${reg.basis} ${J.v} → ${esc(b.text)}</div>${mgkgLines(b.dose,d)}</div>`; }
   else { const title = J.type==='overlap' ? `원문 구간 경계값 · ${reg.basis} ${J.v}은 두 구간에 모두 해당합니다. 임상 상황에 맞게 선택하세요.`
          : J.type==='gap' ? `원문 구간 사이 값 · ${reg.basis} ${J.v}은 원문 구간 사이에 있습니다. 양쪽 용량을 참고하세요.`
          : `원문에 ${reg.basis} ${J.v}에 해당하는 구간이 없습니다. 가장 가까운 구간을 참고하세요.`;
-    card=`<div class="rec warn"><div class="lab">⚠ 확인 필요 · ${basisTxt}</div><div class="why">${title}</div><div class="alt">${J.hits.map(b=>`<span>${esc(b.text)}</span><div>${subLines(b.dose,J.v)||esc(doseTxt(b.dose))}</div>`).join('')}</div>${[...new Set(J.hits.map(b=>mgkgLines(b.dose,d)))].join('')}</div>`; }
+    card=`<div class="rec warn"><div class="lab">⚠ 확인 필요 · ${basisTxt}</div><div class="why">${title}</div><div class="alt">${J.hits.map(b=>`<span>${esc(b.text)}</span><div>${subLines(b.dose,J.v,true)||esc(doseTxt(b.dose))}</div>`).join('')}</div>${[...new Set(J.hits.map(b=>mgkgLines(b.dose,d)))].join('')}</div>`; }
   const cls = b => !hitSet.has(b.text)?'':(J.type==='one'?'hit':'amb');
-  const rows=reg.bands.map(b=>`<tr class="${cls(b)}"><td>${esc(b.text)}</td><td class="${b.dose?'dz':'na'}">${b.dose?esc(b.dose):'자료 없음'}</td></tr>`).join('')
+  const rows=reg.bands.map(b=>`<tr class="${cls(b)}"><td>${esc(b.text)}</td><td class="${b.dose?'dz':'na'}">${b.dose?(hitSet.has(b.text)&&subLines(b.dose,J.v))||esc(b.dose):'자료 없음'}</td></tr>`).join('')
     + ['HD','CAPD','CRRT'].map((k,i)=>{const x=reg.dialysis[k]; return `<tr class="dial${i===0?' sep':''} ${J.type==='dial'&&J.key===k?'hit':''}"><td>${k}</td><td class="${x.dose?'dz':'na'}">${x.dose?esc(x.dose):'자료 없음'}</td></tr>`;}).join('');
   const wnote=d.weight_label?`<p class="note">mg/kg 계산 체중: ${esc(d.weight_label)}</p>`:'';
   $('dOut').innerHTML=`<div class="dname"><h3>${esc(d.name)}</h3><span class="meta">${esc((d.brand||'').replace(/\n/g,' · '))} · ${esc(d.class)}</span></div>

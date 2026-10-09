@@ -106,14 +106,13 @@ main.wrap{display:flex;flex-direction:column;gap:14px;padding-block:14px 32px}
 .bt td:first-child{white-space:nowrap;color:var(--ink2);width:1%}
 .bt td.dz{white-space:pre-line}
 .bt td.na{color:var(--muted)}
-.bt tr.dial td:first-child{font-weight:600}
 .bt tr.sep td{border-top:2px solid var(--line)}
 .bt tr.hit td{background:var(--accent-soft)}
 .bt tr.hit td:first-child{box-shadow:inset 3px 0 0 var(--accent);color:var(--accent);font-weight:700}
 .bt tr.amb td{background:var(--warn-soft)}
 .bt tr.amb td:first-child{box-shadow:inset 3px 0 0 var(--warn);color:var(--warn);font-weight:700}
-.bt .ln{display:block}
-.bt .ln.on{font-weight:700;color:var(--accent)}
+.ln{display:block}
+.ln.on{font-weight:700;color:var(--accent)}
 .note{font-size:11.5px;color:var(--muted);margin-top:8px}
 .tblw{overflow-x:auto}
 

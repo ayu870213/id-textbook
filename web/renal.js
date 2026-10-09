@@ -81,14 +81,23 @@ function judgeV(reg, v){
   return {type:'outside',v,hits:[below||above].filter(Boolean)};
 }
 
-/* 한 칸 안에 "CrCl a-b: ..." 줄이 여럿인 용량(colistin 등): 해당하는 줄 표시 → [{text, on}] 또는 null */
+/* 한 칸 안에 "CrCl a-b: ..." 줄이 여럿인 용량(colistin 등): 해당하는 줄 표시
+   → [{text, on, crcl}] (crcl: CrCl 조건이 있는 줄) 또는 null */
 function lineHits(text, v){
   if(!text||v==null||!/CrCl\s*[\d<>≥≤]/.test(text.split('\n').slice(1).join('\n'))) return null;
-  return text.split('\n').map(l=>{
-    const m=l.match(/CrCl\s*(≥|>=|>|<|≤)?\s*(\d+)(?:\s*-\s*(\d+))?/); let on=false;
-    if(m){ const a=+m[2], b=m[3]?+m[3]:null, op=m[1];
-      if(b!=null) on=v>=a&&v<=b; else if(op==='≥'||op==='>=') on=v>=a; else if(op==='>') on=v>a; else if(op==='<') on=v<a; else if(op==='≤') on=v<=a; }
-    return {text:l, on};
+  const lines=text.split('\n').map(l=>{
+    const m=l.match(/CrCl\s*(≥|>=|>|<|≤)?\s*(\d+)(?:\s*-\s*(\d+))?/);
+    return {l, op:m?.[1], a:m?+m[2]:null, b:m?.[3]!=null?+m[3]:null};
+  });
+  // 다음 줄이 같은 값에서 시작하면("80-90" 다음에 "90-…"이나 "≥90") 그 값은 다음 줄에 속한다 (80 to <90)
+  const starts=new Set(lines.filter(x=>x.a!=null&&(x.b!=null||x.op==='≥'||x.op==='>=')).map(x=>x.a));
+  return lines.map(({l,op,a,b})=>{
+    let on=false;
+    if(a!=null){
+      if(b!=null) on=v>=a&&(starts.has(b)?v<b:v<=b);
+      else if(op==='≥'||op==='>=') on=v>=a; else if(op==='>') on=v>a; else if(op==='<') on=v<a; else if(op==='≤') on=v<=a;
+    }
+    return {text:l, on, crcl:a!=null};
   });
 }
 

@@ -258,35 +258,43 @@ function calc(){
   const blank = id => $(id).value.trim()==='';
   missing=[]; const e=[];
   if(!sex) missing.push('성별');
-  for(const [id,name,ok,msg] of [['age','나이',age>=18&&age<=120,'나이(18–120)'],['wt','체중',wt>0,'체중'],
-                                 ['ht','키',ht>=100&&ht<=250,'키(100–250 cm)'],['cr','SCr',scr>0,'SCr']]){
+  const checks=[['age','나이',age>=18&&age<=120,'나이(18–120)'],['wt','체중',wt>0,'체중'],['ht','키',ht>=100&&ht<=250,'키(100–250 cm)']];
+  if(!rrt) checks.push(['cr','SCr',scr>0,'SCr']); // 투석 중이면 SCr로 신기능을 추정할 수 없고 용량은 투석 칸에서 정함
+  for(const [id,name,ok,msg] of checks){
     if(blank(id)) missing.push(name); else if(!ok) e.push(msg);
   }
   $('perr').textContent = e.length ? '입력 확인: '+e.join(', ') : '';
   if(e.length||missing.length) return null;
   const inch=ht/2.54, ibw=(sex==='m'?50:45.5)+2.3*(inch-60), adj=ibw+0.4*(wt-ibw), bmi=wt/(ht/100)**2;
-  const cg = w => (140-age)*w/(72*scr)*(sex==='f'?0.85:1);
+  const cg = w => rrt ? null : (140-age)*w/(72*scr)*(sex==='f'?0.85:1);
   let key, why;
   if(bmi<18.5){key='tbw';why='BMI '+f1(bmi)+' · 실제체중';}
   else if(bmi<25){ if(wt<ibw){key='tbw';why='BMI '+f1(bmi)+' · 실제체중(<IBW)';} else {key='ibw';why='BMI '+f1(bmi)+' · IBW';} }
   else {key='adj';why='BMI '+f1(bmi)+' · AdjBW';}
   const W={tbw:wt,ibw,adj};
   const k=sex==='f'?0.7:0.9, a=sex==='f'?-0.241:-0.302;
-  const egfr=142*Math.min(scr/k,1)**a*Math.max(scr/k,1)**-1.2*0.9938**age*(sex==='f'?1.012:1);
+  const egfr=rrt ? null : 142*Math.min(scr/k,1)**a*Math.max(scr/k,1)**-1.2*0.9938**age*(sex==='f'?1.012:1);
   return {sex,age,wt,ht,scr,rrt,bmi,ibw,adj,W,key,why,crcl:cg(W[key]),egfr,
     rows:[['tbw','실제체중 (TBW)',wt],['ibw','이상체중 (IBW)',ibw],['adj','보정체중 (AdjBW)',adj]].map(([k,n,w])=>({k,n,w,c:cg(w)}))};
 }
 function renderP(){
   P=calc();
   if(!P){ $('minibar').innerHTML='<span>환자 정보를 입력하세요</span><a href="#top">입력</a>'; $('vCrcl').innerHTML='–<i>mL/min</i>'; $('vEgfr').innerHTML='–<i>mL/min/1.73m²</i>'; $('vWhy').textContent=''; $('wRows').innerHTML=''; $('wMeta').textContent=''; }
+  else if(P.rrt){
+    $('vCrcl').innerHTML='–<i>mL/min</i>';
+    $('vEgfr').innerHTML='–<i>mL/min/1.73m²</i>';
+    $('vWhy').textContent=`${P.rrt} 중 · 투석 용량 사용`;
+    $('minibar').innerHTML=`<span><b>${P.rrt}</b></span><span>투석 용량 사용</span><a href="#top">환자 정보 수정</a>`;
+    $('wRows').innerHTML=P.rows.map(r=>`<tr><td>${r.n}</td><td class="n">${f1(r.w)}</td><td class="n">–</td></tr>`).join('');
+  }
   else{
     $('vCrcl').innerHTML=Math.round(P.crcl)+'<i>mL/min</i>';
     $('vEgfr').innerHTML=Math.round(P.egfr)+'<i>mL/min/1.73m²</i>';
     $('vWhy').textContent=P.why;
-    $('minibar').innerHTML=`<span>CrCl <b>${Math.round(P.crcl)}</b></span><span>eGFR <b>${Math.round(P.egfr)}</b></span><span>${P.rrt||'투석 없음'}</span><a href="#top">환자 정보 수정</a>`;
+    $('minibar').innerHTML=`<span>CrCl <b>${Math.round(P.crcl)}</b></span><span>eGFR <b>${Math.round(P.egfr)}</b></span><span>투석 없음</span><a href="#top">환자 정보 수정</a>`;
     $('wRows').innerHTML=P.rows.map(r=>`<tr class="${r.k===P.key?'on':''}"><td>${r.n}${r.k===P.key?' · CrCl 사용':''}</td><td class="n">${f1(r.w)}</td><td class="n">${f1(r.c)}</td></tr>`).join('');
-    $('wMeta').innerHTML=`BMI ${f1(P.bmi)} kg/m² · TBW/IBW ${Math.round(P.wt/P.ibw*100)}%${P.wt>P.ibw*1.2?' (비만 기준 초과)':''}${P.ht<152.4?'<br>키 152.4 cm 미만: IBW 해석 주의':''}`;
   }
+  if(P) $('wMeta').innerHTML=`BMI ${f1(P.bmi)} kg/m² · TBW/IBW ${Math.round(P.wt/P.ibw*100)}%${P.wt>P.ibw*1.2?' (비만 기준 초과)':''}${P.ht<152.4?'<br>키 152.4 cm 미만: IBW 해석 주의':''}`;
   renderDose();
 }
 

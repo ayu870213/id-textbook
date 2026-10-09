@@ -123,6 +123,22 @@ test('투석을 고르면 투석 용량을 씀', () => {
   assert.equal(J.type, 'dial'); assert.equal(J.key, 'HD');
 });
 
+test('투석 중이면 SCr 없이 계산하고 CrCl·eGFR은 표시하지 않음', () => {
+  const P = patient({ ...CASES[0].p, scr: '', rrt: 'CRRT' });
+  assert.ok(P, 'SCr 없이도 계산되어야 함');
+  assert.equal(P.crcl, null); assert.equal(P.egfr, null);
+  assert.equal($('vCrcl').textContent, '–mL/min');
+  assert.match($('minibar').textContent, /CRRT.*투석 용량 사용/);
+  assert.equal(app.judge(reg('piperacillin-tazobactam')).type, 'dial');
+  // mg/kg 계산은 투석 중에도 체중으로 계속됨
+  assert.match(mgkg('vancomycin', '20-30mg/kg (max 3g)'), /1,680–2,520 mg/);
+});
+
+test('투석을 해제하면 다시 SCr이 필요함', () => {
+  assert.equal(patient({ ...CASES[0].p, scr: '', rrt: '' }), null);
+  assert.match($('dOut').textContent, /남은 항목: SCr/);
+});
+
 // ---------------------------------------------------------------- mg/kg
 const mgkg = (id, text) => app.mgkgLines(text, drug(id)).replace(/<[^>]+>/g, '');
 

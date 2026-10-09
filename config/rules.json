@@ -1,0 +1,27 @@
+{
+  "weight_rules": {
+    "IBW_AG": "IBW (TBW<IBW이면 TBW, TBW>IBW×120%이면 AdjBW)",
+    "TBW": "TBW",
+    "TBW_OBESE_ADJ": "TBW (TBW>IBW×120%이면 AdjBW)",
+    "MIN_IBW_TBW": "IBW와 TBW 중 작은 값 (부하용량)"
+  },
+  "drug_weight": {
+    "amikacin": "IBW_AG",
+    "gentamicin": "IBW_AG",
+    "vancomycin": "TBW",
+    "teicoplanin": "TBW",
+    "daptomycin": "TBW",
+    "trimethoprim/sulfamethoxazole": "TBW_OBESE_ADJ",
+    "colistin": "MIN_IBW_TBW"
+  },
+  "drug_name_alias": {
+    "trimethoprim": "trimethoprim/sulfamethoxazole"
+  },
+  "guide_groups": [
+    {"group": "약제 부록", "title_starts_with": ["감염내과 약제", "내과 약제", "기타 약제"]},
+    {"group": "예방접종", "title_contains": ["예방접종"]}
+  ],
+  "guide_group_default": "질환",
+  "guide_group_order": ["질환", "예방접종", "약제 부록"],
+  "default_drug": "piperacillin-tazobactam"
+}

@@ -356,7 +356,7 @@ function subLines(text, v){
 
 /* ---------- 권장 용량 ---------- */
 const DRUGS=DATA.drugs.filter(d=>d.status==='active');
-let sel=DRUGS.find(d=>d.id==='piperacillin-tazobactam')?.id||DRUGS[0].id, regIx=0;
+let sel=DRUGS.find(d=>d.id===DATA.meta?.default_drug)?.id||DRUGS[0].id, regIx=0;
 function renderList(){
   const q=$('dq').value.trim().toLowerCase(); let html='', cls=null;
   const list=DRUGS.filter(d=>!q||(d.name+' '+(d.brand||'')).toLowerCase().includes(q));

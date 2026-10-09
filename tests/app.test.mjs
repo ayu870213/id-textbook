@@ -10,7 +10,7 @@ const drugs = JSON.parse(readFileSync(new URL('tests/fixtures/drugs.json', root)
 const guides = [{ id: 's01', group: '질환', title: '테스트', subsections: [], html: '<p>본문</p>' }];
 
 function load() {
-  const html = readFileSync(new URL('index.html', root), 'utf8');
+  const html = readFileSync(new URL('web/index.html', root), 'utf8');
   const marker = 'const EMBED=/*__DATA__*/null;';
   assert.ok(html.includes(marker), 'index.html에 데이터 삽입 위치가 없음');
   const data = { revised: '2026-01-01', meta: {}, drugs, guides };
@@ -170,6 +170,14 @@ test('colistin 부하 용량: IBW와 TBW 중 작은 값', () => {
 test('TMP-SMX: 비만이면 AdjBW', () => {
   patient(CASES[4].p); // AdjBW 66.71
   assert.match(mgkg('trimethoprim-sulfamethoxazole', '10-20mg/kg\ndivided q6-12h'), /667–1,334 mg/);
+});
+
+test('config/rules.json의 체중 규칙이 화면 계산에 모두 구현되어 있음', () => {
+  const rules = JSON.parse(readFileSync(new URL('config/rules.json', root), 'utf8'));
+  patient(CASES[0].p);
+  for (const rule of Object.keys(rules.weight_rules)) {
+    assert.ok(app.doseWeight({ weight: rule }), `${rule}: index.html의 doseWeight()에 없음`);
+  }
 });
 
 test('체중 규칙이 없는 약은 mg/kg 계산을 표시하지 않음', () => {

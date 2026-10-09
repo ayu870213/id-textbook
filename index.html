@@ -244,6 +244,7 @@ body{margin:0}
   <p>본 자료는 임상 판단을 보조하기 위한 것이며, 최종 처방 용량은 처방의의 판단과 책임에 따릅니다.</p>
   <p>오류나 수정이 필요한 내용이 있으면 인제대학교 일산백병원 감염내과 현종훈 선생님에게 연락해 주세요.</p>
   <p>최종 개정일: <span id="rev"></span></p>
+  <p id="src"></p>
 </div></footer>
 
 <script>
@@ -253,6 +254,8 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const f1 = x => (Math.round(x*10)/10).toFixed(1);
 $('rev').textContent = DATA.revised;
+const M = DATA.meta;
+if(M?.drugs_source) $('src').textContent = `원본: 용량표 ${M.drugs_source} (${M.drugs_uploaded} 업로드) · 가이드 ${M.guides_source} (${M.guides_uploaded} 업로드)`;
 
 /* ---------- 환자 계산 ---------- */
 let P = null;
@@ -425,7 +428,7 @@ window.__app={calc,judge,judgeV,renderP,get P(){return P},DRUGS,doseWeight,mgkgL
 const EMBED=/*__DATA__*/null;
 if(EMBED) main(EMBED);
 else Promise.all(['data/drugs.json','data/guides.json','data/meta.json'].map(u=>fetch(u,{cache:'no-cache'}).then(r=>{if(!r.ok) throw r.status; return r.json();})))
-  .then(([d,g,m])=>main({revised:m.revised,drugs:d.drugs,guides:g.sections}))
+  .then(([d,g,m])=>main({revised:m.revised,meta:m,drugs:d.drugs,guides:g.sections}))
   .catch(()=>{document.getElementById('dOut').textContent='데이터를 불러오지 못했습니다. 새로고침해 주세요.';});
 </script>
 

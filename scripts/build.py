@@ -41,7 +41,7 @@ def fetch_from_drive(folder_id, workdir):
     svc = build('drive', 'v3', credentials=creds, cache_discovery=False)
     files = svc.files().list(
         q=f"'{folder_id}' in parents and trashed = false",
-        fields='files(id,name,mimeType,modifiedTime)', pageSize=200,
+        fields='files(id,name,mimeType,modifiedTime,createdTime)', pageSize=200,
         supportsAllDrives=True, includeItemsFromAllDrives=True).execute().get('files', [])
     sheets = [f for f in files if f['mimeType'] in (GSHEET, XLSX)]
     docs = [f for f in files if f['mimeType'] in (GDOC, DOCX)]
@@ -49,8 +49,12 @@ def fetch_from_drive(folder_id, workdir):
         raise BuildError('드라이브 폴더에 스프레드시트(구글 시트 또는 .xlsx)가 없습니다.')
     if not docs:
         raise BuildError('드라이브 폴더에 문서(구글 문서 또는 .docx)가 없습니다.')
-    sheet = max(sheets, key=lambda f: f['modifiedTime'])
-    doc = max(docs, key=lambda f: f['modifiedTime'])
+    # 가장 최근에 올린 파일을 쓴다. 수정 시각으로 고르면 옛 파일을 드라이브에서 잠깐 고쳐도 그 파일이 선택된다.
+    sheet = max(sheets, key=lambda f: f['createdTime'])
+    doc = max(docs, key=lambda f: f['createdTime'])
+    for kind, picked, cands in (('용량표', sheet, sheets), ('가이드', doc, docs)):
+        if len(cands) > 1:
+            print(f'{kind}: 후보 {len(cands)}개 중 가장 최근에 올린 "{picked["name"]}" 사용')
 
     def download(f, export_type, path):
         if f['mimeType'].startswith('application/vnd.google-apps'):
@@ -326,8 +330,8 @@ def main():
     if a.xlsx and a.docx:
         xp, dp = a.xlsx, a.docx
         mt = lambda p: dt.datetime.fromtimestamp(os.path.getmtime(p), dt.timezone.utc).isoformat()
-        sheet = {'name': os.path.basename(xp), 'id': 'local', 'modifiedTime': mt(xp)}
-        doc = {'name': os.path.basename(dp), 'id': 'local', 'modifiedTime': mt(dp)}
+        sheet = {'name': os.path.basename(xp), 'id': 'local', 'modifiedTime': mt(xp), 'createdTime': mt(xp)}
+        doc = {'name': os.path.basename(dp), 'id': 'local', 'modifiedTime': mt(dp), 'createdTime': mt(dp)}
     else:
         xp, dp, sheet, doc = fetch_from_drive(os.environ['GDRIVE_FOLDER_ID'], work)
 
@@ -339,9 +343,11 @@ def main():
 
     drugs = parse_xlsx(xp)
     guides = convert_docx(dp, os.path.join(out, 'data', 'img'))
-    newest = max(sheet['modifiedTime'], doc['modifiedTime'])
-    revised = dt.datetime.fromisoformat(newest.replace('Z', '+00:00')).astimezone(KST).strftime('%Y-%m-%d')
-    meta = {'revised': revised, 'source_rev': source_rev, 'drugs_source': sheet['name'], 'guides_source': doc['name'],
+    kst_date = lambda t: dt.datetime.fromisoformat(t.replace('Z', '+00:00')).astimezone(KST).strftime('%Y-%m-%d')
+    revised = kst_date(max(sheet['modifiedTime'], doc['modifiedTime']))
+    meta = {'revised': revised, 'source_rev': source_rev,
+            'drugs_source': sheet['name'], 'drugs_uploaded': kst_date(sheet['createdTime']),
+            'guides_source': doc['name'], 'guides_uploaded': kst_date(doc['createdTime']),
             'built_at': dt.datetime.now(KST).isoformat(timespec='minutes')}
 
     dump = lambda o, f: json.dump(o, open(os.path.join(out, 'data', f), 'w', encoding='utf-8'), ensure_ascii=False)

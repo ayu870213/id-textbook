@@ -1,0 +1,10 @@
+# 빌드 결과물
+_site/
+_work/
+
+# 로컬 테스트용 원본 사본 (원본은 구글 드라이브)
+samples/
+
+__pycache__/
+*.pyc
+.venv/
